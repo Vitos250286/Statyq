@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statiq | Первый в мире статичный автомобиль</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Кастомные анимации и стили */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #a3e635, #2dd4bf, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Эффект жидкого стекла */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Блик жидкого стекла (анимация) */
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.08), rgba(255,255,255,0));
+            transform: skewX(-25deg);
+            animation: glass-shine 7s infinite;
+        }
+        
+        @keyframes glass-shine {
+            0% { left: -150%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        /* Параллакс слои */
+        .parallax-layer {
+            position: absolute;
+            inset: 0;
+            will-change: transform;
+        }
+
+        /* Анимация природных элементов (пузыри/жидкость) на фоне */
+        .eco-blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out alternate;
+            z-index: -1;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(8%, 15%) scale(1.1); }
+            100% { transform: translate(-8%, 5%) scale(0.9); }
+        }
+
+        /* Стили для плавающих элементов параллакса */
+        .floating-item {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-50 font-sans antialiased overflow-x-hidden">
+
+    <!-- Жидкие фоновые эффекты -->
+    <div class="fixed inset-0 z-[-2] bg-[#020617]"></div>
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="eco-blob bg-lime-500/30 w-[500px] h-[500px] rounded-full top-[-10%] left-[-10%]"></div>
+        <div class="eco-blob bg-cyan-500/30 w-[600px] h-[600px] rounded-full bottom-[-20%] right-[-10%]" style="animation-delay: -5s;"></div>
+        <div class="eco-blob bg-emerald-400/20 w-[400px] h-[400px] rounded-full top-[40%] left-[40%]" style="animation-delay: -10s;"></div>
+    </div>
+
+    <!-- Навигация -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 rounded-b-3xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="leaf" class="w-6 h-6 text-lime-400"></i>
+                    <span class="font-bold text-xl tracking-widest uppercase">Statiq</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#concept" class="hover:text-lime-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">Концепция</a>
+                        <a href="#features" class="hover:text-lime-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">Эко-преимущества</a>
+                        <a href="#specs" class="hover:text-lime-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">Характеристики</a>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="openModal()" class="bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 px-5 py-2 rounded-full text-sm font-bold hover:scale-105 transition-transform shadow-[0_0_20px_rgba(132,204,22,0.4)]">
+                        Предзаказ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главный экран -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <!-- Фоновое изображение (Параллакс) -->
+            <div class="parallax-layer w-full h-full" data-speed="0.4">
+                <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=2041&auto=format&fit=crop" alt="[Изображение экологичного леса]" class="w-full h-[120%] object-cover opacity-40 object-center mix-blend-overlay">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto opacity-0 animate-fade-in parallax-layer flex flex-col justify-center h-full" data-speed="-0.15">
+            <div>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 drop-shadow-2xl">
+                    <span class="gradient-text">Никуда</span> не едет.
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-200 mb-10 font-light max-w-2xl mx-auto opacity-0 animate-fade-in delay-100">
+                    Зачем куда-то ехать, если вы уже в гармонии с природой? Представляем первый в мире абсолютно статичный автомобиль. Совершенство покоя.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in delay-200">
+                    <button onclick="openModal()" class="bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                        Забронировать место
+                    </button>
+                    <a href="#features" class="glass-panel text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-white/10 transition-colors">
+                        Узнать больше
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-80 z-20">
+            <i data-lucide="chevron-down" class="w-10 h-10 text-lime-400 drop-shadow-[0_0_10px_rgba(132,204,22,0.8)]"></i>
+        </div>
+    </section>
+
+    <!-- Блок Концепции -->
+    <section id="concept" class="py-32 relative z-10">
+        <!-- Параллакс: Передний план (Быстро, крупно, размыто) -->
+        <div class="floating-item top-[5%] left-[5%] parallax-layer" data-speed="-0.7" data-local="true">
+            <i data-lucide="leaf" class="w-40 h-40 text-emerald-500/30 blur-md transform -rotate-12"></i>
+        </div>
+        <div class="floating-item bottom-[-10%] right-[5%] parallax-layer" data-speed="-0.6" data-local="true">
+            <i data-lucide="shield-check" class="w-32 h-32 text-cyan-400/20 blur-sm transform rotate-12"></i>
+        </div>
+        
+        <!-- Параллакс: Средний план (Средняя скорость, четко) -->
+        <div class="floating-item top-[60%] right-[15%] parallax-layer" data-speed="-0.2" data-local="true">
+            <i data-lucide="coffee" class="w-16 h-16 text-lime-400/30 transform rotate-45"></i>
+        </div>
+        
+        <!-- Параллакс: Задний план (Медленно, мелко) -->
+        <div class="floating-item top-[20%] left-[60%] parallax-layer" data-speed="0.3" data-local="true">
+            <i data-lucide="tree-pine" class="w-10 h-10 text-emerald-400/20 blur-[2px] transform -rotate-6"></i>
+        </div>
+        <div class="floating-item bottom-[20%] left-[25%] parallax-layer" data-speed="0.4" data-local="true">
+            <i data-lucide="sun" class="w-12 h-12 text-lime-400/10 blur-[1px]"></i>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center glass-panel rounded-[3rem] p-12 lg:p-20 shadow-2xl relative z-10 border-t-lime-500/20">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-white">Искусство недвижения</h2>
+            <p class="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
+                Мы переосмыслили саму суть автомобилестроения в эпоху экологии. Мы убрали двигатель, трансмиссию, колеса оставили исключительно для эстетики. Результат? Транспортное средство с нулевым углеродным следом, которое дарит вам главное — время наедине с собой и природой, без стресса от пробок и вреда для планеты.
+            </p>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section id="features" class="py-32 relative z-10">
+        <!-- Параллакс: Передний план (Быстро) -->
+        <div class="floating-item top-[10%] right-[8%] parallax-layer" data-speed="-0.8" data-local="true">
+            <i data-lucide="map-pin" class="w-48 h-48 text-lime-400/10 blur-md transform rotate-45"></i>
+        </div>
+        <div class="floating-item bottom-[5%] left-[8%] parallax-layer" data-speed="-0.65" data-local="true">
+            <i data-lucide="sun" class="w-36 h-36 text-emerald-500/20 blur-sm transform -rotate-12"></i>
+        </div>
+
+        <!-- Параллакс: Средний план (Фокус) -->
+        <div class="floating-item top-[40%] left-[85%] parallax-layer" data-speed="-0.3" data-local="true">
+            <i data-lucide="leaf" class="w-20 h-20 text-emerald-400/30 transform -rotate-45"></i>
+        </div>
+        <div class="floating-item top-[60%] right-[80%] parallax-layer" data-speed="-0.15" data-local="true">
+            <i data-lucide="tree-pine" class="w-24 h-24 text-lime-500/20 transform rotate-6"></i>
+        </div>
+
+        <!-- Параллакс: Задний план (Далеко) -->
+        <div class="floating-item bottom-[20%] right-[30%] parallax-layer" data-speed="0.25" data-local="true">
+            <i data-lucide="shield-check" class="w-12 h-12 text-cyan-500/10 blur-[2px]"></i>
+        </div>
+        <div class="floating-item top-[15%] left-[40%] parallax-layer" data-speed="0.4" data-local="true">
+            <i data-lucide="coffee" class="w-10 h-10 text-emerald-300/15 blur-[1px] transform -rotate-12"></i>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Карточка 1 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-lime-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(45,212,191,0.2)] group-hover:shadow-[0_0_25px_rgba(45,212,191,0.5)] transition-all">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">100% Безопасность</h3>
+                    <p class="text-slate-400">Вероятность попасть в аварию сведена к абсолютному нулю. Ваш Statiq — самая безопасная крепость на планете.</p>
+                </div>
+
+                <!-- Карточка 2 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-emerald-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all">
+                        <i data-lucide="leaf" class="w-8 h-8 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Экология будущего</h3>
+                    <p class="text-slate-400">Никакого бензина. Никакого электричества на зарядку. Абсолютный нулевой углеродный след с первой секунды покупки.</p>
+                </div>
+
+                <!-- Карточка 3 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-lime-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(132,204,22,0.2)] group-hover:shadow-[0_0_25px_rgba(132,204,22,0.5)] transition-all">
+                        <i data-lucide="sun" class="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Свет и стекло</h3>
+                    <p class="text-slate-400">Панорамная крыша из переработанного умного стекла пропускает максимум естественного света, сохраняя тепло.</p>
+                </div>
+
+                <!-- Карточка 4 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-cyan-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(6,182,212,0.2)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all">
+                        <i data-lucide="coffee" class="w-8 h-8 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Дзен за рулем</h3>
+                    <p class="text-slate-400">Идеальное место, чтобы попить кофе, послушать пение птиц в тишине или просто отдохнуть на свежем воздухе.</p>
+                </div>
+
+                <!-- Карточка 5 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-emerald-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all">
+                        <i data-lucide="tree-pine" class="w-8 h-8 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Ландшафтный дизайн</h3>
+                    <p class="text-slate-400">Statiq идеально вписывается в любой сад или лужайку, становясь футуристичным дополнением ландшафта.</p>
+                </div>
+
+                <!-- Карточка 6 -->
+                <div class="glass-panel p-8 rounded-3xl hover:-translate-y-3 transition-transform duration-300 group border-t-lime-500/30">
+                    <div class="w-16 h-16 bg-slate-900/80 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(132,204,22,0.2)] group-hover:shadow-[0_0_25px_rgba(132,204,22,0.5)] transition-all">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Вы уже прибыли</h3>
+                    <p class="text-slate-400">Мгновенная телепортация в точку назначения, при условии, что она совпадает с местом установки вашего эко-монумента.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Характеристики -->
+    <section id="specs" class="py-32 relative z-10">
+        <!-- Параллакс: Передний план (Быстро) -->
+        <div class="floating-item top-[20%] left-[-2%] parallax-layer" data-speed="-0.7" data-local="true">
+            <i data-lucide="coffee" class="w-40 h-40 text-cyan-500/20 blur-md transform -rotate-12"></i>
+        </div>
+        <div class="floating-item top-[60%] right-[4%] parallax-layer" data-speed="-0.6" data-local="true">
+            <i data-lucide="shield-check" class="w-32 h-32 text-lime-400/10 blur-sm transform rotate-12"></i>
+        </div>
+
+        <!-- Параллакс: Средний план (Фокус) -->
+        <div class="floating-item bottom-[15%] right-[15%] parallax-layer" data-speed="-0.2" data-local="true">
+            <i data-lucide="tree-pine" class="w-24 h-24 text-emerald-500/25 transform rotate-6"></i>
+        </div>
+        <div class="floating-item top-[10%] left-[70%] parallax-layer" data-speed="-0.1" data-local="true">
+            <i data-lucide="sun" class="w-16 h-16 text-lime-400/30 transform -rotate-12"></i>
+        </div>
+
+        <!-- Параллакс: Задний план (Далеко) -->
+        <div class="floating-item bottom-[25%] left-[25%] parallax-layer" data-speed="0.3" data-local="true">
+            <i data-lucide="map-pin" class="w-10 h-10 text-emerald-400/20 blur-[2px]"></i>
+        </div>
+        <div class="floating-item top-[80%] right-[60%] parallax-layer" data-speed="0.45" data-local="true">
+            <i data-lucide="leaf" class="w-12 h-12 text-cyan-400/10 blur-[3px] transform rotate-45"></i>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 glass-panel rounded-[3rem] p-12 relative z-10 border-x-emerald-500/20">
+            <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center text-white">Эко-Характеристики</h2>
+            
+            <div class="divide-y divide-slate-800 border-t border-b border-slate-800">
+                <div class="py-6 flex justify-between items-center hover:bg-slate-800/50 px-4 rounded-lg transition-colors">
+                    <span class="text-xl text-slate-300">Выбросы CO2</span>
+                    <span class="text-2xl font-bold text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.5)]">0 г/км</span>
+                </div>
+                <div class="py-6 flex justify-between items-center hover:bg-slate-800/50 px-4 rounded-lg transition-colors">
+                    <span class="text-xl text-slate-300">Разгон до 100 км/ч</span>
+                    <span class="text-2xl font-bold text-white">Никогда</span>
+                </div>
+                <div class="py-6 flex justify-between items-center hover:bg-slate-800/50 px-4 rounded-lg transition-colors">
+                    <span class="text-xl text-slate-300">Максимальная скорость</span>
+                    <span class="text-2xl font-bold text-white">0 км/ч</span>
+                </div>
+                <div class="py-6 flex justify-between items-center hover:bg-slate-800/50 px-4 rounded-lg transition-colors">
+                    <span class="text-xl text-slate-300">Запас хода</span>
+                    <span class="text-2xl font-bold text-white">∞ лет</span>
+                </div>
+                <div class="py-6 flex justify-between items-center hover:bg-slate-800/50 px-4 rounded-lg transition-colors">
+                    <span class="text-xl text-slate-300">Материалы корпуса</span>
+                    <span class="text-2xl font-bold text-cyan-400">Переработанный пластик и стекло</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Призыв к действию -->
+    <section class="py-40 relative z-10">
+        <!-- Параллакс: Передний план (Быстро) -->
+        <div class="floating-item bottom-[10%] right-[70%] parallax-layer" data-speed="-0.75" data-local="true">
+            <i data-lucide="tree-pine" class="w-48 h-48 text-emerald-500/20 blur-md transform rotate-12"></i>
+        </div>
+        <div class="floating-item bottom-[40%] right-[10%] parallax-layer" data-speed="-0.55" data-local="true">
+            <i data-lucide="coffee" class="w-36 h-36 text-lime-400/15 blur-sm transform -rotate-12"></i>
+        </div>
+
+        <!-- Параллакс: Средний план (Фокус) -->
+        <div class="floating-item top-[20%] right-[5%] parallax-layer" data-speed="-0.25" data-local="true">
+            <i data-lucide="leaf" class="w-20 h-20 text-cyan-400/30 transform -rotate-45"></i>
+        </div>
+        <div class="floating-item top-[60%] left-[15%] parallax-layer" data-speed="-0.15" data-local="true">
+            <i data-lucide="map-pin" class="w-16 h-16 text-lime-400/25 transform rotate-12"></i>
+        </div>
+
+        <!-- Параллакс: Задний план (Далеко) -->
+        <div class="floating-item top-[20%] left-[85%] parallax-layer" data-speed="0.35" data-local="true">
+            <i data-lucide="sun" class="w-12 h-12 text-emerald-400/15 blur-[2px]"></i>
+        </div>
+        <div class="floating-item top-[10%] left-[60%] parallax-layer" data-speed="0.2" data-local="true">
+            <i data-lucide="shield-check" class="w-10 h-10 text-cyan-500/10 blur-[1px] transform -rotate-12"></i>
+        </div>
+
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#020617]"></div>
+            <!-- Декоративные круги -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto glass-panel p-16 rounded-[4rem] shadow-2xl border-t-lime-500/30">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">Остановите мгновение.</h2>
+            <p class="text-xl text-slate-300 mb-10">Станьте владельцем монументального спокойствия. Установите во дворе, окружите зеленью и наслаждайтесь статусом.</p>
+            <button onclick="openModal()" class="bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 px-10 py-5 rounded-full text-xl font-bold hover:scale-105 transition-transform shadow-[0_0_40px_rgba(132,204,22,0.5)]">
+                Оформить эко-предзаказ за 0₽
+            </button>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="bg-[#020617] py-12 border-t border-slate-900 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <i data-lucide="leaf" class="w-5 h-5 text-lime-500"></i>
+                <span class="font-bold tracking-widest uppercase text-lime-500">Statiq</span>
+            </div>
+            <p class="text-slate-500 text-sm">
+                &copy; 2026 Statiq Motors. Все права защищены. 100% экологично.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Модальное окно предзаказа -->
+    <div id="preorderModal" class="fixed inset-0 z-[100] hidden items-center justify-center px-4">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-[#020617]/80 backdrop-blur-md" onclick="closeModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative glass-panel border border-lime-500/30 p-8 rounded-3xl w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 bg-slate-950/80" id="modalContent">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h3 class="text-2xl font-bold mb-2 text-white">Оформление предзаказа</h3>
+            <p class="text-slate-400 mb-6 text-sm">Мы свяжемся с вами, чтобы обсудить координаты установки вашего эко-монумента.</p>
+            
+            <form id="orderForm" onsubmit="submitForm(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Имя</label>
+                    <input type="text" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-lime-400 transition-colors" placeholder="Грета Тунберг">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+                    <input type="email" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-lime-400 transition-colors" placeholder="eco@statiq.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Где поставим?</label>
+                    <select class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-lime-400 transition-colors [&>option]:bg-slate-900">
+                        <option>Во дворе (в гармонии с лужайкой)</option>
+                        <option>В лесу (как место для медитации)</option>
+                        <option>Вместо клумбы на даче</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 font-bold py-3 rounded-xl mt-4 hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(132,204,22,0.3)]">
+                    Застолбить место
+                </button>
+            </form>
+
+            <!-- Сообщение об успехе (скрыто по умолчанию) -->
+            <div id="successMessage" class="hidden flex-col items-center justify-center py-8 text-center">
+                <div class="w-16 h-16 bg-lime-500/20 text-lime-400 rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(132,204,22,0.4)]">
+                    <i data-lucide="check" class="w-8 h-8"></i>
+                </div>
+                <h4 class="text-xl font-bold mb-2 text-white">Отлично! Вы в гармонии.</h4>
+                <p class="text-slate-400">Ваша заявка принята. Ожидайте доставки эко-бетонных блоков для фиксации.</p>
+                <button onclick="closeModal()" class="mt-6 text-sm text-lime-400 underline hover:text-lime-300">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация иконок
+        lucide.createIcons();
+
+        // Логика параллакса (обновленная для всех элементов на странице)
+        document.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const parallaxLayers = document.querySelectorAll('.parallax-layer');
+            
+            parallaxLayers.forEach(layer => {
+                const speed = layer.getAttribute('data-speed');
+                if (speed) {
+                    // Если у элемента есть атрибут data-local, рассчитываем смещение
+                    // относительно его секции, чтобы он не улетал за пределы экрана
+                    if (layer.hasAttribute('data-local')) {
+                        const parent = layer.parentElement;
+                        const rect = parent.getBoundingClientRect();
+                        // Вычисляем позицию секции относительно центра экрана
+                        const centerOffset = (window.innerHeight / 2) - (rect.top + rect.height / 2);
+                        layer.style.transform = `translateY(${centerOffset * parseFloat(speed)}px)`;
+                    } else {
+                        // Классический параллакс для фона главного экрана
+                        layer.style.transform = `translateY(${scrolled * parseFloat(speed)}px)`;
+                    }
+                }
+            });
+        });
+
+        // Логика модального окна
+        const modal = document.getElementById('preorderModal');
+        const modalContent = document.getElementById('modalContent');
+        const orderForm = document.getElementById('orderForm');
+        const successMessage = document.getElementById('successMessage');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                setTimeout(() => {
+                    orderForm.classList.remove('hidden');
+                    successMessage.classList.add('hidden');
+                    orderForm.reset();
+                }, 300);
+            }, 200);
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            orderForm.classList.add('hidden');
+            successMessage.classList.remove('hidden');
+            successMessage.classList.add('flex');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
